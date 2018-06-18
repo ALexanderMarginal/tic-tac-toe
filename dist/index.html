@@ -1,0 +1,39 @@
+
+<!-- Created by alexandermarginal on 18.06.2018.--><!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TIC-TAC-TOE by AlexanderMarginal</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <body>
+      <main>
+        <div id="ask">
+          <h2>Введите размер поля и нажмите "Начать"</h2>
+          <input id="size" type="number" min="3" value="3">
+          <h2 id="start" onclick="init('size')">Начать</h2>
+          <div class="chooce" id="chooce">
+            <label>
+              <input type="radio" name="chooce" value="human"> играть с человеком
+            </label>
+            <label>
+              <input type="radio" name="chooce" value="ai"> играть с ai
+            </label>
+          </div>
+        </div>
+        <div id="end">
+          <h1 id="emdText"></h1>
+          <button onclick="restart()">Начать заново</button>
+        </div>
+        <table class="app__wrapper">
+          <tbody id="app"></tbody>
+        </table>
+        <div class="player">
+          <div class="player__item active" id="p1">Игрок 1 - <span></span></div>
+          <div class="player__item" id="p2">Игрок 1 - <span></span></div>
+        </div>
+      </main>
+      <script src="assets/js/main.js"></script>
+    </body>
+  </head>
+</html>

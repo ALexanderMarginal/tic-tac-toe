@@ -1,0 +1,36 @@
+// Created by alexandermarginal on 18.06.2018.
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		meta(name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no")
+
+		title TIC-TAC-TOE by AlexanderMarginal
+
+		link(rel="stylesheet" href="assets/css/main.css")
+
+		body
+			main
+				#ask
+					h2 Введите размер поля и нажмите "Начать"
+					input#size(type="number" min=3 value=3)
+					h2#start(onclick="init('size')") Начать
+					.chooce#chooce
+						label
+							input(type="radio" name="chooce" value="human")
+							=" играть с человеком"
+						label
+							input(type="radio" name="chooce" value="ai")
+							=" играть с ai"
+				#end
+					h1#emdText
+					button(onclick="restart()") Начать заново
+				table.app__wrapper
+					tbody#app
+				.player
+					#p1.player__item.active="Игрок 1 - "
+						span
+					#p2.player__item="Игрок 1 - "
+						span
+
+			script(src="assets/js/main.js")

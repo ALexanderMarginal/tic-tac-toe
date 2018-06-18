@@ -1,0 +1,122 @@
+main {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+.app__wrapper {
+  width: 600px;
+  height: 600px;
+  border-collapse: collapse;
+  border: 1px solid gray;
+  background: white; }
+  .app__wrapper td {
+    border: 1px solid gray;
+    cursor: pointer;
+    transition: background .25s ease;
+    position: relative; }
+    .app__wrapper td:hover {
+      background: lightgray; }
+    .app__wrapper td[data-player-mark="X"] {
+      color: green; }
+    .app__wrapper td[data-player-mark="O"] {
+      color: red; }
+  .app__wrapper .mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+  .app__wrapper .end td {
+    background: lightgrey; }
+    .app__wrapper .end td[data-player-mark="X"] {
+      background: green;
+      color: white; }
+    .app__wrapper .end td[data-player-mark="O"] {
+      background: red;
+      color: white; }
+
+#ask {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  z-index: 10;
+  transition: opacity .5s ease; }
+  #ask input {
+    padding: 1rem; }
+  #ask.start {
+    opacity: 0;
+    z-index: -1; }
+  #ask .chooce {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; }
+
+#start {
+  cursor: pointer;
+  padding: .5rem 3rem;
+  border: 1px solid lightslategray;
+  transition: background .25s ease; }
+  #start:hover {
+    background: lightgray; }
+
+#end {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity .5s ease;
+  background: rgba(255, 255, 255, 0.75); }
+  #end.active {
+    z-index: 5;
+    opacity: 1; }
+  #end button {
+    font-size: 1.5rem;
+    padding: .5rem 3rem;
+    background: white; }
+    #end button:hover {
+      background: lightgray; }
+
+.player {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 30px;
+  height: 600px; }
+  .player div {
+    flex: 0 0 50%; }
+  .player span {
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    margin-left: 5px; }
+  .player .player__item {
+    display: flex;
+    align-items: center;
+    opacity: .25; }
+    .player .player__item.active {
+      opacity: 1; }
+  .player #p1 span {
+    background: green; }
+  .player #p2 span {
+    background: red; }
+
+/*# sourceMappingURL=main.css.map */
