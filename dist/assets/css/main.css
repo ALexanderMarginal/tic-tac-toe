@@ -53,8 +53,9 @@ main {
   background: white;
   z-index: 10;
   transition: opacity .5s ease; }
-  #ask input {
-    padding: 1rem; }
+  #ask input[type="number"] {
+    padding: 1rem;
+    margin-bottom: 1rem; }
   #ask.start {
     opacity: 0;
     z-index: -1; }
@@ -63,12 +64,14 @@ main {
     flex-direction: column;
     justify-content: center; }
 
-#start {
-  cursor: pointer;
+button {
+  font-size: 1.5rem;
   padding: .5rem 3rem;
+  background: white;
+  cursor: pointer;
   border: 1px solid lightslategray;
   transition: background .25s ease; }
-  #start:hover {
+  button:hover {
     background: lightgray; }
 
 #end {
@@ -88,12 +91,6 @@ main {
   #end.active {
     z-index: 5;
     opacity: 1; }
-  #end button {
-    font-size: 1.5rem;
-    padding: .5rem 3rem;
-    background: white; }
-    #end button:hover {
-      background: lightgray; }
 
 .player {
   display: flex;

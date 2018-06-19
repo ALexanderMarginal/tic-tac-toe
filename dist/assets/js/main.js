@@ -7,7 +7,12 @@ var p1 = 'p1',
 	size,
 	winCellNumber,
 	count = 0,
-	wrapperArr = [];
+	wrapperArr = [],
+	mode = 'human';
+
+function checkMode (radio) {
+	mode = radio.value;
+}
 
 function init(input) {
 	let app = document.getElementById('app');
@@ -56,6 +61,10 @@ function step(cell) {
 	switch (nextStep){
 		case p1:
 			stepAction(cell, 'X', 1);
+			if(mode == 'ai'){
+				changeClickAction ('return false');
+				//TODO AI
+			}
 			nextStep = p2;
 			checkPlayer();
 			break;
@@ -198,11 +207,7 @@ function checkTopRight(cellRow, cellCol, dataMark) {
 function checkWin() {
 	if(count >= winCellNumber){
 		
-		for(let rows=0; rows<wrapperArr.length-1;rows++){
-			for(let cols=0; cols<wrapperArr[rows].length-1;cols++){
-				wrapperArr[rows][cols].setAttribute('onclick', 'return false');
-			}
-		}
+		changeClickAction ('return false');
 		
 		document.getElementById('app').classList.add('end');
 		document.getElementById('end').classList.add('active');
@@ -237,5 +242,13 @@ function checkPlayer() {
 			document.getElementById('p1').classList.remove('active');
 			document.getElementById('p2').classList.add('active');
 			break;
+	}
+}
+
+function changeClickAction (action) {
+	for(let rows=0; rows<wrapperArr.length;rows++){
+		for(let cols=0; cols<wrapperArr[rows].length;cols++){
+			wrapperArr[rows][cols].setAttribute('onclick', action);
+		}
 	}
 }

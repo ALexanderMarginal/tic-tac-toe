@@ -14,13 +14,13 @@ html
 				#ask
 					h2 Введите размер поля и нажмите "Начать"
 					input#size(type="number" min=3 value=3)
-					h2#start(onclick="init('size')") Начать
+					button#start(onclick="init('size')") Начать
 					.chooce#chooce
 						label
-							input(type="radio" name="chooce" value="human")
+							input(type="radio" name="chooce" onclick="checkMode(this)" value="human" checked)
 							=" играть с человеком"
 						label
-							input(type="radio" name="chooce" value="ai")
+							input(type="radio" name="chooce" onclick="checkMode(this)" value="ai")
 							=" играть с ai"
 				#end
 					h1#emdText
