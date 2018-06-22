@@ -4,6 +4,8 @@
 let p1 = 'p1',
 	p2 = 'p2',
 	ai = 'ai',
+	p1Mark = '[data-player-mark="X"]',
+	p2Mark = '[data-player-mark="O"]',
 	nextStep = p1,
 	size,
 	winCellNumber,
@@ -306,56 +308,71 @@ const AI = {
 		if (stepVars.length == size*size) {
 			step(stepVars[rand(0, stepVars.length-1)]);
 		} else {
-			AI.findWinStep();
+			this.findWinStep(p2Mark, 'O'); //step for WIN
+			this.findWinStep(p1Mark, 'X'); //step for not LOOSE
 		}
-		/*(function (cell, dataMark) {
-			let row = cell.dataset.row,
-				col = cell.dataset.col;
-			
-			count+=1;
-			checkTop(+row, +col, dataMark);
-			checkBottom(+row, +col, dataMark);
-			checkWin();
-			
-			count+=1;
-			checkLeft(+row, +col, dataMark);
-			checkRight(+row, +col, dataMark);
-			checkWin();
-			
-			count+=1;
-			checkTopLeft(+row, +col, dataMark);
-			checkBottomRight(+row, +col, dataMark);
-			checkWin();
-			
-			count+=1;
-			checkBottomLeft(+row, +col, dataMark);
-			checkTopRight(+row, +col, dataMark);
-			checkWin();
-		})(cell, 'X')*/
 	},
 	
 	/* START FIND WIN/LOOSE STEP */
 	getStepCell: function (row,col) {
 		return document.getElementById("row_"+row+"_col_"+col);
 	},
-	findEmptyCellForStep: function(stepRow,stepCol){
-		if (AI.getStepCell(stepRow,stepCol) && getPlayerMark(stepRow,stepCol)==0){
-			console.log(AI.getStepCell(stepRow,stepCol));
+	findEmptyCellForStep: function(stepRow,stepCol,dataMark){
+		if (this.getStepCell(stepRow,stepCol) && getPlayerMark(stepRow,stepCol)==0){
+			console.log(this.getStepCell(stepRow,stepCol));
+			
+			this.count+=1;
+			this.findTop(stepRow,stepCol,dataMark);
+			this.findBottom(stepRow,stepCol,dataMark);
+			this.thisStepWin(stepRow,stepCol);
+			
+			this.count+=1;
+			this.findLeft(stepRow,stepCol,dataMark);
+			this.findRight(stepRow,stepCol,dataMark);
+			this.thisStepWin(stepRow,stepCol);
+			
+			this.count+=1;
+			this.findTopLeft(stepRow,stepCol,dataMark);
+			this.findBottomRight(stepRow,stepCol,dataMark);
+			this.thisStepWin(stepRow,stepCol);
+			
+			this.count+=1;
+			this.findBottomLeft(stepRow,stepCol,dataMark);
+			this.findTopRight(stepRow,stepCol,dataMark);
+			this.thisStepWin(stepRow,stepCol);
 		}
 	},
 	
-	findWinStep: function () {
-		let iOccupiedCell = document.querySelectorAll('[data-player-mark="O"]');
+	findWinStep: function (dataMark,pMark) {
+		let iOccupiedCell = document.querySelectorAll(dataMark);
 		
 		for(let i=0;i<iOccupiedCell.length;i++){
 			let thisCell = iOccupiedCell[i],
-				row = thisCell.dataset.row,
-				col = thisCell.dataset.col;
+				row = +thisCell.dataset.row,
+				col = +thisCell.dataset.col;
+
+			this.findEmptyCellForStep(row-1,col-1,pMark);
+			this.findEmptyCellForStep(row-1,col,pMark);
+			this.findEmptyCellForStep(row-1,col+1,pMark);
+			this.findEmptyCellForStep(row+1,col-1,pMark);
+			this.findEmptyCellForStep(row+1,col,pMark);
+			this.findEmptyCellForStep(row+1,col+1,pMark);
+			this.findEmptyCellForStep(row,col-1,pMark);
+			this.findEmptyCellForStep(row,col+1,pMark);
 			
-			AI.findEmptyCellForStep(row-1,col-1);
 		}
 	},
 	
+	findTop: function(cellRow, cellCol, dataMark) {
+	if(cellRow != 0){
+		cellRow -= 1;
+		
+		while(cellRow != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
+			cellRow -= 1;
+			this.count+=1;
+		}
+	}
+},
 	findBottom: function(cellRow, cellCol, dataMark) {
 	if(cellRow != size-1){
 		cellRow += 1;
@@ -372,7 +389,7 @@ const AI = {
 		
 		while(cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellCol -= 1;
-			AI.count+=1;
+			this.count+=1;
 		}
 	}
 },
@@ -382,7 +399,7 @@ const AI = {
 		
 		while(cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellCol += 1;
-			AI.count+=1;
+			this.count+=1;
 		}
 	}
 },
@@ -394,7 +411,7 @@ const AI = {
 		while(cellRow != -1 && cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow -= 1;
 			cellCol -= 1;
-			AI.count+=1;
+			this.count+=1;
 		}
 	}
 },
@@ -406,7 +423,7 @@ const AI = {
 		while(cellRow != size && cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow += 1;
 			cellCol += 1;
-			AI.count+=1;
+			this.count+=1;
 		}
 	}
 },
@@ -418,7 +435,7 @@ const AI = {
 		while(cellRow != size && cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow += 1;
 			cellCol -= 1;
-			AI.count+=1;
+			this.count+=1;
 		}
 	}
 },
@@ -430,9 +447,17 @@ const AI = {
 		while(cellRow != -1 && cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow -= 1;
 			cellCol += 1;
-			AI.count+=1;
+			this.count+=1;
 		}
 	}
 },
+	
+	thisStepWin:function (row,col) {
+		if(this.count >= winCellNumber){
+			step(this.getStepCell(row,col));
+		}
+		
+		this.count=0;
+	}
 	/* END FIND WIN/LOOSE STEP */
 };
