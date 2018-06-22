@@ -1,29 +1,38 @@
 /**
  * Created by alexandermarginal on 18.06.2018.
  */
-var p1 = 'p1',
+let p1 = 'p1',
 	p2 = 'p2',
+	ai = 'ai',
 	nextStep = p1,
 	size,
 	winCellNumber,
 	count = 0,
 	wrapperArr = [],
-	mode = 'human';
+	mode = 'human',
+	endText = document.getElementById('endText'),
+	app = document.getElementById('app'),
+	end = document.getElementById('end'),
+	ask = document.getElementById('ask'),
+	player1 = document.getElementById(p1),
+	player2 = document.getElementById(p2),
+	emptyCells = '[data-player-mark="0"]',
+	lastStep;
 
 function checkMode (radio) {
 	mode = radio.value;
 }
 
 function init(input) {
-	let app = document.getElementById('app');
-	
 	size=document.getElementById(input).value;
 	
 	(size > 5) ? winCellNumber = 5 : winCellNumber = size;
 	
 	initWrapper(wrapperArr, size);
 	
-	document.getElementById('ask').classList.add('start');
+	ask.classList.add('start');
+	
+	if (nextStep == ai) AI.actionPlanning();
 }
 
 function initWrapper(wrapperArr, size) {
@@ -60,16 +69,27 @@ function initWrapper(wrapperArr, size) {
 function step(cell) {
 	switch (nextStep){
 		case p1:
-			stepAction(cell, 'X', 1);
-			if(mode == 'ai'){
-				changeClickAction ('return false');
-				//TODO AI
+			stepAction(cell, 'X');
+			if(mode == ai){
+				
+				nextStep = ai;
+				checkPlayer();
+				
+				if(!app.classList.contains('end')) AI.actionPlanning();
+				
+				break;
+			} else {
+				nextStep = p2;
+				checkPlayer();
+				break;
 			}
-			nextStep = p2;
+		case ai:
+			stepAction(cell, 'O');
+			nextStep = p1;
 			checkPlayer();
 			break;
 		default:
-			stepAction(cell, 'O', 2);
+			stepAction(cell, 'O');
 			nextStep = p1;
 			checkPlayer();
 			break;
@@ -87,9 +107,12 @@ function stepAction(cell, playerMark) {
 	
 	cell.setAttribute('onclick', 'return false;');
 	
+	lastStep = cell;
+	
 	checkCell(cell, playerMark);
 }
 
+/* START CHECK LINE */
 function checkCell(cell, dataMark) {
 	let row = cell.dataset.row,
 		col = cell.dataset.col;
@@ -113,13 +136,24 @@ function checkCell(cell, dataMark) {
 	checkBottomLeft(+row, +col, dataMark);
 	checkTopRight(+row, +col, dataMark);
 	checkWin();
+	
+	if (document.querySelectorAll(emptyCells).length == 0) {
+		if(!app.classList.contains('end')){
+			changeClickAction ('return false');
+			
+			app.classList.add('end');
+			end.classList.add('active');
+			
+			endText.innerHTML = 'Ничья';
+		}
+	}
 }
 
 function checkTop(cellRow, cellCol, dataMark) {
 	if(cellRow != 0){
 		cellRow -= 1;
 		
-		while(cellRow != -1 && document.getElementById('row_'+cellRow+'_col_'+cellCol).dataset.playerMark == dataMark){
+		while(cellRow != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow -= 1;
 			count+=1;
 		}
@@ -129,7 +163,7 @@ function checkBottom(cellRow, cellCol, dataMark) {
 	if(cellRow != size-1){
 		cellRow += 1;
 		
-		while(cellRow != size && document.getElementById('row_'+cellRow+'_col_'+cellCol).dataset.playerMark == dataMark){
+		while(cellRow != size && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow += 1;
 			count+=1;
 		}
@@ -139,7 +173,7 @@ function checkLeft(cellRow, cellCol, dataMark) {
 	if(cellCol != 0){
 		cellCol -= 1;
 		
-		while(cellCol != -1 && document.getElementById('row_'+cellRow+'_col_'+cellCol).dataset.playerMark == dataMark){
+		while(cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellCol -= 1;
 			count+=1;
 		}
@@ -149,7 +183,7 @@ function checkRight(cellRow, cellCol, dataMark) {
 	if(cellCol != size-1){
 		cellCol += 1;
 		
-		while(cellCol != size && document.getElementById('row_'+cellRow+'_col_'+cellCol).dataset.playerMark == dataMark){
+		while(cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellCol += 1;
 			count+=1;
 		}
@@ -160,7 +194,7 @@ function checkTopLeft(cellRow, cellCol, dataMark) {
 		cellRow -= 1;
 		cellCol -= 1;
 		
-		while(cellRow != -1 && cellCol != -1 && document.getElementById('row_'+cellRow+'_col_'+cellCol).dataset.playerMark == dataMark){
+		while(cellRow != -1 && cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow -= 1;
 			cellCol -= 1;
 			count+=1;
@@ -172,7 +206,7 @@ function checkBottomRight(cellRow, cellCol, dataMark) {
 		cellRow += 1;
 		cellCol += 1;
 		
-		while(cellRow != size && cellCol != size && document.getElementById('row_'+cellRow+'_col_'+cellCol).dataset.playerMark == dataMark){
+		while(cellRow != size && cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow += 1;
 			cellCol += 1;
 			count+=1;
@@ -184,7 +218,7 @@ function checkBottomLeft(cellRow, cellCol, dataMark) {
 		cellRow += 1;
 		cellCol -= 1;
 		
-		while(cellRow != size && cellCol != -1 && document.getElementById('row_'+cellRow+'_col_'+cellCol).dataset.playerMark == dataMark){
+		while(cellRow != size && cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow += 1;
 			cellCol -= 1;
 			count+=1;
@@ -196,51 +230,51 @@ function checkTopRight(cellRow, cellCol, dataMark) {
 		cellRow -= 1;
 		cellCol += 1;
 		
-		while(cellRow != -1 && cellCol != size && document.getElementById('row_'+cellRow+'_col_'+cellCol).dataset.playerMark == dataMark){
+		while(cellRow != -1 && cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
 			cellRow -= 1;
 			cellCol += 1;
 			count+=1;
 		}
 	}
 }
+/* END CHECK LINE */
 
 function checkWin() {
 	if(count >= winCellNumber){
-		
 		changeClickAction ('return false');
 		
-		document.getElementById('app').classList.add('end');
-		document.getElementById('end').classList.add('active');
+		app.classList.add('end');
+		end.classList.add('active');
 		
 		if(nextStep == p1){
-			document.getElementById('emdText').innerHTML = 'Победил игрок 1';
+			endText.innerHTML = 'Победил игрок 1';
+		} else if (nextStep == ai) {
+			endText.innerHTML = 'Победил ИИ';
 		} else {
-			document.getElementById('emdText').innerHTML = 'Победил игрок 2';
+			endText.innerHTML = 'Победил игрок 2';
 		}
-		
 	}
 	
 	count=0;
 }
 
 function restart() {
-	let app = document.getElementById('app');
 	app.classList.remove('end');
 	app.innerHTML='';
-	document.getElementById('end').classList.remove('active');
-	document.getElementById('emdText').innerHTML = '';
-	document.getElementById('ask').classList.remove('start');
+	end.classList.remove('active');
+	endText.innerHTML = '';
+	ask.classList.remove('start');
 }
 
 function checkPlayer() {
 	switch (nextStep){
 		case p1:
-			document.getElementById('p1').classList.add('active');
-			document.getElementById('p2').classList.remove('active');
+			player1.classList.add('active');
+			player2.classList.remove('active');
 			break;
 		default:
-			document.getElementById('p1').classList.remove('active');
-			document.getElementById('p2').classList.add('active');
+			player1.classList.remove('active');
+			player2.classList.add('active');
 			break;
 	}
 }
@@ -252,3 +286,153 @@ function changeClickAction (action) {
 		}
 	}
 }
+
+function getPlayerMark(row,col) {
+	return document.getElementById('row_'+row+'_col_'+col).dataset.playerMark;
+}
+function rand(min, max) {
+	return min + Math.floor(Math.random() * (max + 1 - min));
+}
+
+
+/* AI */
+const AI = {
+	count:0,
+	
+	actionPlanning:function () {
+		let stepVars = document.querySelectorAll(emptyCells);
+		
+		// First step
+		if (stepVars.length == size*size) {
+			step(stepVars[rand(0, stepVars.length-1)]);
+		} else {
+			AI.findWinStep();
+		}
+		/*(function (cell, dataMark) {
+			let row = cell.dataset.row,
+				col = cell.dataset.col;
+			
+			count+=1;
+			checkTop(+row, +col, dataMark);
+			checkBottom(+row, +col, dataMark);
+			checkWin();
+			
+			count+=1;
+			checkLeft(+row, +col, dataMark);
+			checkRight(+row, +col, dataMark);
+			checkWin();
+			
+			count+=1;
+			checkTopLeft(+row, +col, dataMark);
+			checkBottomRight(+row, +col, dataMark);
+			checkWin();
+			
+			count+=1;
+			checkBottomLeft(+row, +col, dataMark);
+			checkTopRight(+row, +col, dataMark);
+			checkWin();
+		})(cell, 'X')*/
+	},
+	
+	/* START FIND WIN/LOOSE STEP */
+	getStepCell: function (row,col) {
+		return document.getElementById("row_"+row+"_col_"+col);
+	},
+	findEmptyCellForStep: function(stepRow,stepCol){
+		if (AI.getStepCell(stepRow,stepCol) && getPlayerMark(stepRow,stepCol)==0){
+			console.log(AI.getStepCell(stepRow,stepCol))
+		}
+	}
+	
+	findWinStep: function () {
+		let iOccupiedCell = document.querySelectorAll('[data-player-mark="O"]');
+		
+		for(let i=0;i<iOccupiedCell.length;i++){
+			let thisCell = iOccupiedCell[i],
+				row = thisCell.dataset.row,
+				col = thisCell.dataset.col;
+			
+			AI.findEmptyCellForStep(row-1,col-1);
+		}
+	},
+	
+	findBottom: function(cellRow, cellCol, dataMark) {
+	if(cellRow != size-1){
+		cellRow += 1;
+		
+		while(cellRow != size && getPlayerMark(cellRow,cellCol) == dataMark){
+			cellRow += 1;
+			AI.count+=1;
+		}
+	}
+},
+	findLeft: function(cellRow, cellCol, dataMark) {
+	if(cellCol != 0){
+		cellCol -= 1;
+		
+		while(cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
+			cellCol -= 1;
+			AI.count+=1;
+		}
+	}
+},
+	findRight: function(cellRow, cellCol, dataMark) {
+	if(cellCol != size-1){
+		cellCol += 1;
+		
+		while(cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
+			cellCol += 1;
+			AI.count+=1;
+		}
+	}
+},
+	findTopLeft: function(cellRow, cellCol, dataMark) {
+	if(cellRow != 0 && cellCol != 0){
+		cellRow -= 1;
+		cellCol -= 1;
+		
+		while(cellRow != -1 && cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
+			cellRow -= 1;
+			cellCol -= 1;
+			AI.count+=1;
+		}
+	}
+},
+	findBottomRight: function(cellRow, cellCol, dataMark) {
+	if(cellRow != size-1 && cellCol != size-1){
+		cellRow += 1;
+		cellCol += 1;
+		
+		while(cellRow != size && cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
+			cellRow += 1;
+			cellCol += 1;
+			AI.count+=1;
+		}
+	}
+},
+	findBottomLeft: function(cellRow, cellCol, dataMark) {
+	if(cellRow != size-1 && cellCol != 0){
+		cellRow += 1;
+		cellCol -= 1;
+		
+		while(cellRow != size && cellCol != -1 && getPlayerMark(cellRow,cellCol) == dataMark){
+			cellRow += 1;
+			cellCol -= 1;
+			AI.count+=1;
+		}
+	}
+},
+	findTopRight: function(cellRow, cellCol, dataMark) {
+	if(cellRow != 0 && cellCol != size-1){
+		cellRow -= 1;
+		cellCol += 1;
+		
+		while(cellRow != -1 && cellCol != size && getPlayerMark(cellRow,cellCol) == dataMark){
+			cellRow -= 1;
+			cellCol += 1;
+			AI.count+=1;
+		}
+	}
+},
+	/* END FIND WIN/LOOSE STEP */
+};
