@@ -340,9 +340,9 @@ const AI = {
 	},
 	findEmptyCellForStep: function(stepRow,stepCol){
 		if (AI.getStepCell(stepRow,stepCol) && getPlayerMark(stepRow,stepCol)==0){
-			console.log(AI.getStepCell(stepRow,stepCol))
+			console.log(AI.getStepCell(stepRow,stepCol));
 		}
-	}
+	},
 	
 	findWinStep: function () {
 		let iOccupiedCell = document.querySelectorAll('[data-player-mark="O"]');
