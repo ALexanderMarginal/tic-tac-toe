@@ -69,32 +69,22 @@ function initWrapper(wrapperArr, size) {
 }
 
 function step(cell) {
-	switch (nextStep) {
-		case p1:
-			stepAction(cell, 'X');
-			if (mode == ai) {
-				
-				nextStep = ai;
-				checkPlayer();
-				
-				if (!app.classList.contains('end')) AI.actionPlanning();
-				
-				break;
-			} else {
-				nextStep = p2;
-				checkPlayer();
-				break;
-			}
-		case ai:
-			stepAction(cell, 'O');
-			nextStep = p1;
+	if(nextStep == p1){
+		stepAction(cell, 'X');
+		if (mode == ai) {
+			
+			nextStep = ai;
 			checkPlayer();
-			break;
-		default:
-			stepAction(cell, 'O');
-			nextStep = p1;
+			
+			if (!app.classList.contains('end')) AI.actionPlanning();
+		} else {
+			nextStep = p2;
 			checkPlayer();
-			break;
+		}
+	} else {
+		stepAction(cell, 'O');
+		nextStep = p1;
+		checkPlayer();
 	}
 }
 
